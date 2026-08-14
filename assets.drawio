@@ -1,0 +1,124 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/26.0.9 Chrome/128.0.6613.186 Electron/32.2.5 Safari/537.36" version="26.0.9">
+  <diagram name="第 1 页" id="ruRTKD74kq-y1jY7oYFk">
+    <mxGraphModel dx="636" dy="-734" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="4Arq_HR25wpo0fh_YcQU-15" value="" style="group" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="280" y="1670" width="280" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="4Arq_HR25wpo0fh_YcQU-1" value="&lt;font style=&quot;font-size: 10px;&quot; face=&quot;JetBrainsMono NF&quot;&gt;build.sh&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="4Arq_HR25wpo0fh_YcQU-15">
+          <mxGeometry width="280" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="4Arq_HR25wpo0fh_YcQU-2" value="&lt;font face=&quot;JetBrainsMono NF&quot;&gt;&lt;span style=&quot;font-size: 10px;&quot;&gt;为项目更新 version.h&lt;/span&gt;&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="4Arq_HR25wpo0fh_YcQU-15">
+          <mxGeometry x="140" y="30" width="140" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="4Arq_HR25wpo0fh_YcQU-8" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="4Arq_HR25wpo0fh_YcQU-15" source="4Arq_HR25wpo0fh_YcQU-3" target="4Arq_HR25wpo0fh_YcQU-7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="4Arq_HR25wpo0fh_YcQU-3" value="&lt;font face=&quot;JetBrainsMono NF&quot;&gt;&lt;span style=&quot;font-size: 10px;&quot;&gt;拉取定制 linux-headers&lt;/span&gt;&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="4Arq_HR25wpo0fh_YcQU-15">
+          <mxGeometry x="140" y="50" width="140" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="4Arq_HR25wpo0fh_YcQU-10" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="4Arq_HR25wpo0fh_YcQU-15" source="4Arq_HR25wpo0fh_YcQU-7" target="4Arq_HR25wpo0fh_YcQU-9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="4Arq_HR25wpo0fh_YcQU-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;curved=1;dashed=1;" edge="1" parent="4Arq_HR25wpo0fh_YcQU-15" source="4Arq_HR25wpo0fh_YcQU-7" target="4Arq_HR25wpo0fh_YcQU-3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="120" y="100" />
+              <mxPoint x="120" y="60" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="4Arq_HR25wpo0fh_YcQU-7" value="&lt;font face=&quot;JetBrainsMono NF&quot;&gt;&lt;span style=&quot;font-size: 10px;&quot;&gt;执行 code/Makefile&lt;/span&gt;&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="4Arq_HR25wpo0fh_YcQU-15">
+          <mxGeometry x="140" y="90" width="140" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="4Arq_HR25wpo0fh_YcQU-9" value="&lt;span style=&quot;font-family: &amp;quot;JetBrainsMono NF&amp;quot;; font-size: 10px;&quot;&gt;编译产物：&lt;/span&gt;&lt;font face=&quot;JetBrainsMono NF&quot;&gt;&lt;span style=&quot;font-size: 10px;&quot;&gt;搬运、清理&lt;/span&gt;&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="4Arq_HR25wpo0fh_YcQU-15">
+          <mxGeometry x="140" y="130" width="140" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="4Arq_HR25wpo0fh_YcQU-13" value="&lt;span style=&quot;font-size: 10px;&quot;&gt;&lt;font face=&quot;JetBrainsMono NF&quot;&gt;基于 linux-headers 的 Makefile 和 Kbuild&lt;/font&gt;&lt;/span&gt;&lt;div&gt;&lt;span style=&quot;font-size: 10px;&quot;&gt;&lt;font face=&quot;JetBrainsMono NF&quot;&gt;编译体系&lt;/font&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-size: 10px;&quot;&gt;&lt;font face=&quot;JetBrainsMono NF&quot;&gt;编译当前项目&amp;nbsp;&lt;/font&gt;&lt;/span&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="4Arq_HR25wpo0fh_YcQU-15">
+          <mxGeometry y="40" width="130" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="4Arq_HR25wpo0fh_YcQU-16" value="&lt;font face=&quot;JetBrainsMono NF&quot;&gt;&lt;span style=&quot;font-size: 10px;&quot;&gt;code/Kbuild&lt;/span&gt;&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="650" y="1670" width="140" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="4Arq_HR25wpo0fh_YcQU-17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;dashed=1;" edge="1" parent="1" source="4Arq_HR25wpo0fh_YcQU-7" target="4Arq_HR25wpo0fh_YcQU-16">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="630" y="1770" />
+              <mxPoint x="630" y="1680" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="4Arq_HR25wpo0fh_YcQU-18" value="&lt;span style=&quot;font-size: 10px;&quot;&gt;&lt;font face=&quot;JetBrainsMono NF&quot;&gt;src=&amp;lt;PRJ&amp;gt;&lt;/font&gt;&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="560" y="1770" width="70" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="4Arq_HR25wpo0fh_YcQU-51" value="" style="group" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="270" y="1940" width="390" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="4Arq_HR25wpo0fh_YcQU-31" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="4Arq_HR25wpo0fh_YcQU-51" source="4Arq_HR25wpo0fh_YcQU-26" target="4Arq_HR25wpo0fh_YcQU-27">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="4Arq_HR25wpo0fh_YcQU-26" value="&lt;font face=&quot;JetBrainsMono NF&quot;&gt;&lt;span style=&quot;font-size: 10px;&quot;&gt;Makefile&lt;/span&gt;&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="4Arq_HR25wpo0fh_YcQU-51">
+          <mxGeometry x="50" y="50" width="80" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="4Arq_HR25wpo0fh_YcQU-33" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="4Arq_HR25wpo0fh_YcQU-51" source="4Arq_HR25wpo0fh_YcQU-27" target="4Arq_HR25wpo0fh_YcQU-41">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="270" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="4Arq_HR25wpo0fh_YcQU-43" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="4Arq_HR25wpo0fh_YcQU-51" source="4Arq_HR25wpo0fh_YcQU-27" target="4Arq_HR25wpo0fh_YcQU-40">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="4Arq_HR25wpo0fh_YcQU-27" value="&lt;font face=&quot;JetBrainsMono NF&quot;&gt;&lt;span style=&quot;font-size: 10px;&quot;&gt;Kbuild&lt;/span&gt;&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="4Arq_HR25wpo0fh_YcQU-51">
+          <mxGeometry x="150" y="50" width="50" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="4Arq_HR25wpo0fh_YcQU-28" value="" style="endArrow=classic;html=1;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=0;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="4Arq_HR25wpo0fh_YcQU-51" source="4Arq_HR25wpo0fh_YcQU-50" target="4Arq_HR25wpo0fh_YcQU-26">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-10" y="60" as="sourcePoint" />
+            <mxPoint x="200" y="90" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="4Arq_HR25wpo0fh_YcQU-36" value="&lt;font face=&quot;JetBrainsMono NF&quot;&gt;&lt;span style=&quot;font-size: 10px;&quot;&gt;内核镜像&lt;/span&gt;&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="4Arq_HR25wpo0fh_YcQU-51">
+          <mxGeometry x="330" y="20" width="60" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="4Arq_HR25wpo0fh_YcQU-37" value="&lt;font face=&quot;JetBrainsMono NF&quot;&gt;&lt;span style=&quot;font-size: 10px;&quot;&gt;内核模块&lt;/span&gt;&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="4Arq_HR25wpo0fh_YcQU-51">
+          <mxGeometry x="330" y="80" width="60" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="4Arq_HR25wpo0fh_YcQU-38" value="&lt;span style=&quot;font-size: 10px;&quot;&gt;&lt;font face=&quot;JetBrainsMono NF&quot;&gt;-C=DIR&lt;/font&gt;&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="4Arq_HR25wpo0fh_YcQU-51">
+          <mxGeometry x="150" y="30" width="80" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="4Arq_HR25wpo0fh_YcQU-39" value="&lt;span style=&quot;font-size: 10px;&quot;&gt;&lt;font face=&quot;JetBrainsMono NF&quot;&gt;-C=DIR M=DIR&lt;/font&gt;&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="4Arq_HR25wpo0fh_YcQU-51">
+          <mxGeometry x="150" y="70" width="80" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="4Arq_HR25wpo0fh_YcQU-44" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="4Arq_HR25wpo0fh_YcQU-51" source="4Arq_HR25wpo0fh_YcQU-40" target="4Arq_HR25wpo0fh_YcQU-37">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="4Arq_HR25wpo0fh_YcQU-40" value="&lt;font face=&quot;JetBrainsMono NF&quot;&gt;&lt;span style=&quot;font-size: 10px;&quot;&gt;模块源码&lt;/span&gt;&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="4Arq_HR25wpo0fh_YcQU-51">
+          <mxGeometry x="250" y="80" width="60" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="4Arq_HR25wpo0fh_YcQU-42" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="4Arq_HR25wpo0fh_YcQU-51" source="4Arq_HR25wpo0fh_YcQU-41" target="4Arq_HR25wpo0fh_YcQU-36">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="4Arq_HR25wpo0fh_YcQU-41" value="&lt;font face=&quot;JetBrainsMono NF&quot;&gt;&lt;span style=&quot;font-size: 10px;&quot;&gt;内核源码&lt;/span&gt;&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="4Arq_HR25wpo0fh_YcQU-51">
+          <mxGeometry x="250" y="20" width="60" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="4Arq_HR25wpo0fh_YcQU-45" value="&lt;span style=&quot;font-size: 10px;&quot;&gt;&lt;font face=&quot;JetBrainsMono NF&quot;&gt;target: vmlinux&lt;/font&gt;&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="4Arq_HR25wpo0fh_YcQU-51">
+          <mxGeometry x="250" width="140" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="4Arq_HR25wpo0fh_YcQU-46" value="&lt;span style=&quot;font-size: 10px;&quot;&gt;&lt;font face=&quot;JetBrainsMono NF&quot;&gt;target: modules&lt;/font&gt;&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="4Arq_HR25wpo0fh_YcQU-51">
+          <mxGeometry x="250" y="60" width="140" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="4Arq_HR25wpo0fh_YcQU-48" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;dashed=1;exitX=1;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="4Arq_HR25wpo0fh_YcQU-51" source="4Arq_HR25wpo0fh_YcQU-47" target="4Arq_HR25wpo0fh_YcQU-40">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="4Arq_HR25wpo0fh_YcQU-47" value="&lt;font face=&quot;JetBrainsMono NF&quot;&gt;&lt;span style=&quot;font-size: 10px;&quot;&gt;由 Kbuild 文件组织&lt;/span&gt;&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="4Arq_HR25wpo0fh_YcQU-51">
+          <mxGeometry x="150" y="110" width="110" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="4Arq_HR25wpo0fh_YcQU-50" value="&lt;span style=&quot;font-size: 10px;&quot;&gt;&lt;font face=&quot;JetBrainsMono NF&quot;&gt;make&lt;/font&gt;&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="4Arq_HR25wpo0fh_YcQU-51">
+          <mxGeometry y="40" width="40" height="20" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

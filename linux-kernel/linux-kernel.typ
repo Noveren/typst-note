@@ -1,4 +1,4 @@
-#import "../typst-note/template.typ": *
+#import "../template.typ": *
 #show: conf
 
 #let url = (
@@ -13,6 +13,8 @@
 
 #outline()
 #pagebreak()
+
+#include "compilation.typ"
 
 #h(2em)内核 Linux Kenerl 为宏内核 Monolithic Kernel，将
 _核心功能、设备驱动、文件系统等编译为整体_，虽然运行效率高，但若需修改内核
@@ -679,33 +681,3 @@ https://docs.kernel.org/driver-api/device-io.html#
     安全性
   ],
 )
-
-#pagebreak()
-= 字符设备
-
-#h(2em)_设备号_ `typedef uint32_t dev_t` 是内核为设备分配的唯一标识，由
-_主设备号_ `MAJOR(dev) [31:20]` 和 _次设备号_ `MINOR(dev) [19:0]` 组
-成（使用 `MKDEV(ma, mi)` 构造）
-
-
-#grid(align: horizon, columns: (1.5fr, 1fr), gutter: 4pt,
-  [
-    #h(2em)_字符设备_ 是按 `char` 对进行数据读写的设备，通常不支持随机
-    存取数据，实现中通常不使用缓存器，
-  ],
-  ```c
-  struct cdev {
-    struct kobject kobj;
-    struct module *owner;
-    const struct file_operations *ops;
-    struct list_head list;
-    dev_t dev;
-    unsigned int count;
-  };
-  ```
-)
-
-
-https://doc.embedfire.com/linux/imx6/driver/zh/latest/linux_driver/character_device.html
-
-https://github.com/0voice/linux_kernel_wiki/blob/main/%E6%96%87%E7%AB%A0/%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/Linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AD%A6%E4%B9%A0%E4%B9%8B%E5%AD%97%E7%AC%A6%E8%AE%BE%E5%A4%87.md

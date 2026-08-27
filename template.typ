@@ -1,6 +1,10 @@
 #import "@preview/cjk-unbreak:0.2.3": remove-cjk-break-space
 
-#let conf(doc, color-theme: rgb(138, 92, 245)) = {
+#let conf(
+  doc,
+  color-theme: rgb(138, 92, 245),
+  heading_1_pagebreak: false,
+) = {
   show: remove-cjk-break-space
 
   let font-size = 10.5pt;
@@ -13,7 +17,9 @@
 
   set heading(numbering: "1.")
   show heading.where(level: 1): it => {
-    pagebreak()
+    if heading_1_pagebreak {
+      pagebreak()
+    }
     it
   }
   show heading: set block(below: 1.5em)
@@ -38,7 +44,9 @@
     it
   }
 
-  set outline(title: block(width: 100%)[#align(center + horizon)[目录]])
+  set outline(title: block(width: 100%)[#align(center + horizon)[
+    目录
+  ]])
 
   show link: it => {
     set text(fill: color-theme)

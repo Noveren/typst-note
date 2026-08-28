@@ -113,10 +113,13 @@ TODO https://zhuanlan.zhihu.com/p/22792718875
 
 ```c
 module_param(name, type, perm);
+
+static int debug_level = 0;
+module_param(debug_level, int, 0644);
+MODULE_PARM_DESC(debug_level, "Debug level (0=off, 1=info, 2=verbose)");
+
+$ insmod /path/to/module.ko debug_level=1
 ```
-
-加载时，向模块传入参数
-
 
 #pagebreak()
 = 内核功能接口
@@ -154,8 +157,18 @@ module_param(name, type, perm);
     *备注*：未指定日志等级的消息采用 `#define KERN_DEFAULT ""` 默认等级
   ],
   [
-    *备注*：提供包装 `pr_xxx(fmt, ...)`，在包含 `prink.h` 前声明
+    *备注*：提供包装 `pr_xxx(fmt, ...)`；在包含 `prink.h` 前声明
     `#define pr_fmt(fmt)` 可 _定制字符串_
+  ],
+  [
+    *备注*：包装 `pr_debug` 提供两种版本，若编译内核时
+    启用 `DYNAMIC_DEBUG` 相关功能（`.config`）则使用 _动态版本_，否则
+    根据 `DEBUG` 宏编译时剔除，前者可动态配置输出
+    ```bash
+    # 动态开关 整个模块、指定文件、指定函数 的 pr_debug 输出
+    $ echo "module [<module>] [file <file>.c] [func <func>] [+p -p]" \
+      | sudo tee /proc/dynamic_debug/control
+    ```
   ],
 )
 ]
@@ -166,10 +179,13 @@ module_param(name, type, perm);
 也可以直接打印到控制台（若足够重要）
 
 #table(align: (center + horizon, horizon), columns: (1fr, 4fr),
-  [*方法*], [*说明*],
+  [*方法*], align(center)[*说明*],
   [控制台查看], [
     #h(2em)文件 `/proc/sys/kernel/printk` 设置控制台日志输出级别（当前、
-    默认、最低、启动时），级别不低于当前等级才能打印到控制台 `4 4 1 7`
+    默认、最低、启动时），级别不低于当前等级才能打印到控制台 `4 4 1 7`，临时修改命令：
+    ```bash
+    $ sudo sh -c "echo '8 4 1 7' > /proc/sys/kernel/printk"
+    ```
   ],
   [`dmesg`], [
     ```bash
@@ -472,6 +488,13 @@ _保障数据一致性_、_避免竟态条件_ 的关键同步工具，其作为
 == 无锁环形队列 `<linux/kfifo.h>`
 
 内核提供 _无锁环形队列_ `struct kfifo` 实现
+
+== 符号查找 `<kallsyms.h>`
+
+函数 `unsigned long kallsyms_lookup_name(const char *name);` 可通过符
+号名称查找其地址，需要内核开启 `KALLSYMS & KALLSYMS_ALL` 支持
+
+
 
 #pagebreak()
 = 内核构建系统

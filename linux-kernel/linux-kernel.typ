@@ -1,6 +1,14 @@
 #import "../template.typ": *
 #show: conf
 
+#context {
+  let is-main-file = state("is-main-file", false).get()
+  if not is-main-file {
+    outline()
+    pagebreak()
+  }
+}
+
 #let url = (
   "kernel-module-0": "https://doc.embedfire.com/linux/imx6/driver/zh/latest/linux_driver/module.html",
   "kernel-module-1": "https://github.com/yifengyou/linux-3.13.0",

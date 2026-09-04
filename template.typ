@@ -4,6 +4,7 @@
   doc,
   color-theme: rgb(138, 92, 245),
   heading_1_pagebreak: false,
+  main: false,
 ) = {
   show: remove-cjk-break-space
 

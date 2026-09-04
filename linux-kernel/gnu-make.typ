@@ -1,6 +1,14 @@
 #import "../template.typ": *
 #show: conf
 
+#context {
+  let is-main-file = state("is-main-file", false).get()
+  if not is-main-file {
+    outline()
+    pagebreak()
+  }
+}
+
 = GNU Make
 
 #quote()[

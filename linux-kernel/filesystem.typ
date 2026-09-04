@@ -1,6 +1,14 @@
 #import "../template.typ": *
 #show: conf
 
+#context {
+  let is-main-file = state("is-main-file", false).get()
+  if not is-main-file {
+    outline()
+    pagebreak()
+  }
+}
+
 = 文件系统
 
 #quote()[
@@ -242,6 +250,60 @@ struct inode_operations {
   table.cell(rowspan: 2)[], 
   ``, [
   ],
+)
+
+== 序列文件接口 `<linux/seq_file.h>`
+
+#h(2em)在 DebugFS、`/proc` 或其他位置创建 _虚拟文件_，是内核组件向人类用
+户提供信息的一种有用方法，_序列文件接口_ `<linux/seq_file.h>` 旨在提供简
+化这类虚拟文件的实现；`seq_file` 需在 `file_operations` 的 `open` 中使
+用 `seq_open` 关联 `seq_operations` _迭代器接口_：
+
+#table(align: center + horizon, columns: (1fr, 6fr),
+  table.cell(rowspan: 2)[`start`],
+  `void* (*)(struct seq_file *m, loff_t *pos);`,
+  [
+    创建自定义会话并返回 `void *v`；
+    跨会话可用 `seq_file->private` 保存; \
+    当 `pos == 0` 时，可返回 `SEQ_START_TOKEN` 指示 `show` 在输出开头
+    打印起始信息
+  ],
+  table.cell(rowspan: 2)[`stop`],
+  `void (*)(struct seq_file *m, void *v);`,
+  [
+    关闭会话，清理资源
+  ],
+  table.cell(rowspan: 2)[`next`],
+  `void* (*)(struct seq_file *m, void *v, loff_t *pos);`,
+  [
+    迭代器向前，修改 `pos`，终点返回 `NULL`，否则返回 `void *v`
+  ],
+  table.cell(rowspan: 2)[`show`],
+  `int (*)(struct seq_file *, void *);`,
+  [
+    将当前指向以 _格式化接口_ 输出，正常返回 `0`，
+    返回 `SEQ_SKIP` 表示跳过（丢弃当前格式化）
+  ],
+)
+
+#list(
+  [
+    *备注*：`show` 中使用 `seq_printf`、`seq_putc`、`seq_puts` 等
+    _格式化接口_ 输出到 `seq_file` 维护的缓冲区
+  ]
+)
+
+#h(2em)通常，对于 `seq_file`，只需在声明 `struct file_operations` 时，
+提供调用 `seq_open` 函数从而关联迭代器 `seq_operations` 的 `open` 实现，
+其余可用 `seq_file` 的 `seq_read`、`seq_lseek`、`seq_release` 而无需
+自行实现
+
+#list(
+  [
+    *备注*：简单 `seq_file` 仅需通过 `single_open`提供 `show` 和 `v`，
+    专门用于输出固定数据的 _一次性_ 场景，相应需配对使
+    用 `single_release` 释放资源
+  ]
 )
 
 == `ioctl`

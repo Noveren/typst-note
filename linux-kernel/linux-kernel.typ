@@ -502,7 +502,80 @@ _保障数据一致性_、_避免竟态条件_ 的关键同步工具，其作为
 函数 `unsigned long kallsyms_lookup_name(const char *name);` 可通过符
 号名称查找其地址，需要内核开启 `KALLSYMS & KALLSYMS_ALL` 支持
 
+== 高精度定时器 `<linux/hrtimer.h>`
 
+#h(2em)TODO
+
+```c
+void hrtimer_init(struct hrtimer*, clockid_t, enum hrtimer_mode);
+void hrtimer_start(struct hrtimer*, ktime_t, enum hrtimer_mode);
+bool hrtimer_active(const struct hrtimer*);
+int hrtimer_cancel(struct hrtimer*);
+```
+
+#h(2em)使用函数 `hrtimer_init` 初始化高精度定时器，包括初始化实例，
+选定 _时钟源_ `clockid_t` 和 _工作模式_ `enum hrtimer_mode`，
+再 _手动绑定回调_ `hrtimer.function = callback;`，最后
+指定 _定时时间_ `ktime_t` 和
+工作模式（通常与 `init` 一致，可添加 `PINNED`）启动定时器
+
+#list(
+  [
+    *备注*：时钟源常选 `CLOCK_MONOTONIC` _单调时间_（从系统启动时开始）
+    ，且不是所有时钟源都可用
+  ],
+  [
+    *备注*：`init` 和 `start` 时可选工作模式（可组合），一般一致，除了
+    考虑 `PINNED`
+    #quote()[
+      #table(align: center + horizon, columns: (0.5fr, 0.7fr, 3fr),
+        table.cell(colspan: 2)[`HRTIMTER_MODE_*`], [说明],
+        table.cell(rowspan: 2)[时间模式],
+        [`ABS`], [
+          绝对：定时器到期时刻是一个绝对的时间点
+        ],
+        [`REL`], [
+          相对：定时器到期时刻是其 _启动后_ 经一段时间的时间点
+        ],
+        table.cell(rowspan: 3)[执行模式],
+        [`PINNED`], [
+          绑定在启动定时器的内核上运行（仅在 `hrtimer_start` 配置有效）
+        ],
+        [`SOFT`], [
+          定时器回调在 _软中断上下文_ 中执行
+        ],
+        [`HARD`], [
+          定时器回调在 _硬件中断上下文_ 中执行
+        ],
+      )
+    ]
+  ]
+)
+
+```c
+typedef callback_fn enum hrtimer_restart (*)(struct hrtimer*);
+u64 hrtimer_forward_now(struct hrtimer*, ktime_t interval);
+```
+
+#h(2em)定时器回调通过返回 `HRTIMER_NORESTART` 或 `HRTIMER_RESTART` 表
+示该定时器重启（重复定时执行），若 `RESTART`，则需返回前
+使用 `hrtimer_forward_now` 调整 `到期时间 = 当前时间 + interval`，
+否则将由于已到达 `到期时间` 将立即重入回调导致崩溃；若 `interval` 固定，
+则 #text(fill: red, weight: "bold")[回调按该周期执行]
+
+
+== `<linux/time.h>`
+
+#table(align: center + horizon, columns: (1fr, 3fr),
+  [`clockid_t CLOCK_*`], [*说明*],
+  [`REALTIME`], [现实时间],
+  [`MONOTONIC`], [单调时间],
+)
+
+
+
+```c
+```
 
 #pagebreak()
 = 内核构建系统

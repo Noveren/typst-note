@@ -554,7 +554,11 @@ int hrtimer_cancel(struct hrtimer*);
 
 ```c
 typedef callback_fn enum hrtimer_restart (*)(struct hrtimer*);
+// 将定时器向前推进到当前时间之后的下一个周期 
+// 返回：跨越周期次数，0 表示没有滞后
 u64 hrtimer_forward_now(struct hrtimer*, ktime_t interval);
+// now = ktime_get
+u64 cnosal_hrtimer_forward(struct hrtimer*, ktime_t now, ktime_t interval);
 ```
 
 #h(2em)定时器回调通过返回 `HRTIMER_NORESTART` 或 `HRTIMER_RESTART` 表

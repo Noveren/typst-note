@@ -127,6 +127,7 @@ struct inode {
 \
 \
 
+#pagebreak()
 == 文件
 
 ```c
@@ -146,6 +147,45 @@ struct file {
   ],
 )
 
+== 用户空间数据交互
+
+#h(2em)在 `write/read` 等接口中，形参 `char *` 或 `const char *`
+来自用户空间并使用 `__user` 标注，由于内核空间和用户空间拥有不同的地址空间
+和内存映射，而用户空间提供的指针在内核上下文中可能无效，因此，需使用内核提
+供的接口， _将数据在用户空间和内核空间之间拷贝_，核心函数如下：
+```c
+// 返回 *未能成功* 拷贝的字节数量（-EFAULT）
+unsigned long copy_from_user(void *to, const void __user *from, unsigned long n);
+unsigned long copy_to_user(void __user *to, const void *from, unsigned long n);
+```
+
+#list(
+  [
+    *备注*：在 `write/read` 实现中，需要手动维护偏移量和缓冲区边界，内核
+    将常规逻辑封装并提供两个辅助函数 `simple_read_from_user` 和
+    `simple_write_to_user`，参考实现如下，可用于参考 `read` 实现
+    ```c
+    ssize_t simple_read_from_user(void __user *to, size_t count,
+      loff_t *ppos, const void *from, size_t avaiable)
+    {
+      if (pos < 0) return -EINVAL;               // 偏移量不能为负
+      if (pos >= available || !count) return 0;  // 已读完或读取长度为0
+      if (count > available - pos)               // 请求长度不能超过剩余数据
+          count = available - pos;
+      ret = copy_to_user(to, from + pos, count); // 调用核心拷贝函数
+      if (ret == count) return -EFAULT;          // 完全失败
+      count -= ret;
+      *ppos = pos + count;  // 更新偏移量
+      return count;         // 返回实际读取的字节数
+    }
+    ```
+  ]
+)
+
+  // [
+  //   *备注*： 使用 `u64_to_user_ptr` 得到指针
+  // ]
+
 == 操作接口
 
 ```c
@@ -161,10 +201,6 @@ struct file_operations {
     回 `EINVAL`，对于 `open` 和 `release`，若文件打开或释放时无特殊操作
     ，则可为 `NULL`
   ],
-  [
-    *备注*：使用 `copy_to_user` 和 `copy_from_user` 访问用户空间内存；
-    使用 `u64_to_user_ptr` 得到指针
-  ]
 )
 
 #table(align: center + horizon, columns: (auto, 5fr),
@@ -252,14 +288,18 @@ struct inode_operations {
   ],
 )
 
+#pagebreak()
 == 序列文件接口 `<linux/seq_file.h>`
 
-#h(2em)在 DebugFS、`/proc` 或其他位置创建 _虚拟文件_，是内核组件向人类用
-户提供信息的一种有用方法，_序列文件接口_ `<linux/seq_file.h>` 旨在提供简
-化这类虚拟文件的实现；`seq_file` 需在 `file_operations` 的 `open` 中使
-用 `seq_open` 关联 `seq_operations` _迭代器接口_：
+#h(2em)内核组件常在 `/proc` 或其他位置创建 _虚拟文件_ 以提供信息，
+_序列文件接口_ `<linux/seq_file.h>` 旨在提供简
+化这类虚拟文件的实现；`seq_file` 需在 `struc file_operations` 的
+`open` 中，使用 `seq_open` 关联 _迭代器_ 结构体，如下：
 
 #table(align: center + horizon, columns: (1fr, 6fr),
+  table.cell(colspan: 2)[
+    `struct seq_operations { /* ...... */ }`
+  ],
   table.cell(rowspan: 2)[`start`],
   `void* (*)(struct seq_file *m, loff_t *pos);`,
   [
@@ -278,34 +318,45 @@ struct inode_operations {
   [
     迭代器向前，修改 `pos`，终点返回 `NULL`，否则返回 `void *v`
   ],
-  table.cell(rowspan: 2)[`show`],
+  table.cell(rowspan: 2)[`show` \ _single_open_],
   `int (*)(struct seq_file *, void *);`,
   [
-    将当前指向以 _格式化接口_ 输出，正常返回 `0`，
+    将当前指向 _格式化接口_ 输出，正常返回 `0`，
     返回 `SEQ_SKIP` 表示跳过（丢弃当前格式化）
   ],
 )
+
+```c
+static const struct seq_operations my_seq_file_ops = { }
+static const struct file_operations my_seq_file = {
+  .owner   = THIS_MODULE,
+  .open    = my_seq_open, /* seq_open(file, &my_seq_file_ops) */
+  .read    = seq_read,    /* seq_file builtin */
+  .llseak  = seq_lseek,   /* seq_file builtin */
+  .release = seq_release, /* seq_file builtin */
+}
+```
 
 #list(
   [
     *备注*：`show` 中使用 `seq_printf`、`seq_putc`、`seq_puts` 等
     _格式化接口_ 输出到 `seq_file` 维护的缓冲区
-  ]
-)
-
-#h(2em)通常，对于 `seq_file`，只需在声明 `struct file_operations` 时，
-提供调用 `seq_open` 函数从而关联迭代器 `seq_operations` 的 `open` 实现，
-其余可用 `seq_file` 的 `seq_read`、`seq_lseek`、`seq_release` 而无需
-自行实现
-
-#list(
+  ],
   [
-    *备注*：简单 `seq_file` 仅需通过 `single_open`提供 `show` 和 `v`，
-    专门用于输出固定数据的 _一次性_ 场景，相应需配对使
-    用 `single_release` 释放资源
+    *备注*，只需在声明 `struct file_operations` 时，提供
+    调用 `seq_open` 函数从而关联 `seq_operations` 的 `open` 实现，
+    其余可用 `seq_file` 提供的
+    `seq_read`、`seq_lseek`、`seq_release` 而无需自行实现
+  ],
+  [
+    *备注*：简单 `seq_file`，在 `my_seq_open` 中，可
+    使用 _简单_ `single_open`提供 `show` 和 `v`，而不用 `seq_open`，
+    适用于专门输出固定数据的 _一次性_ 场景，相应需 _配对_
+    `single_release` 释放资源
   ]
 )
 
+#pagebreak()
 == `ioctl`
 
 ```c
@@ -387,9 +438,229 @@ https://github.com/0voice/linux_kernel_wiki/blob/main/%E6%96%87%E7%AB%A0/%E8%AE%
 
 == 设备驱动模型
 
+#h(2em)设备驱动模型为解决 _驱动代码和设备信息耦合的问题_ 而被提出，
+采用 `设备 <-> 总线 <-> 驱动` 结构，其中，_设备_ 负责提供硬
+件资源， _驱动_ 负责使用硬件资源，_总线_ 关联二者，功能相同设备
+被归于同一 _类_
+
+
+#table(align: (center + horizon, horizon), columns: (auto, 1fr),
+  [*路径*], align(center)[*说明*],
+  `/sys/bus`, [
+    #h(2em)已注册总线（验证是否已支持），包含该总线上 _设备_ `ln -s` 和 _驱动_
+  ],
+  `/sys/devices`, [
+    #h(2em)全局设备结构体系，包含所有注册在各种总线上的各种 _设备_
+  ],
+  `/sys/class`, [
+    #h(2em)内核已注册设备类型，按设备功能分类，
+    如鼠标在 `/sys/class/input` 下
+  ],
+)
+
+#list(
+  [
+    *备注*：系统启动后，先创建 `/sys/bus` 路径，再进行 _总线注册_，
+    最后进行 _设备注册_ 和 _驱动注册_
+  ],
+)
+
+*总线* `struct bus_type;`：代表同类设备需遵守的工作时序，
+是连接主机和设备的桥梁；_驱动总线_ 概念抽象一于 _物理总线_ 但
+不严格一致，前者还包含 _平台总线_ 用于简单设备驱动（按键、LED 等）
+
+#list(
+  [
+    *备注*：_总线驱动_ 负责实现总线行为，
+    其管理 _设备链表_ 和 _驱动链表_，将设备和驱动进行匹配
+  ],
+)
+
+*设备* `struct device;`：
+
+*驱动* `struct device_driver;`：
+
+TODO 属性文件
+
+
 https://doc.embedfire.com/linux/imx6/driver/zh/latest/linux_driver/linux_device_model.html#
 
+== 设备树
 
+#h(2em)设备树 Device Tree 于 Linux 3.x 以后被引入，用于描述一个硬件平台
+的 _板级细节_，其围绕 _配置文件_ DSL 在编译时进行 _代码生成_
+
+== 驱动框架
+
+=== I2C
+
+#table(align: (center + horizon, horizon), columns: (auto, 1fr),
+  [*概念*], align(center)[*说明*],
+  [适配器 `struct i2c_adapter`], [
+  ],
+  [算法 `struct i2c_algorithm`], [
+  ],
+  [从设备 `struct i2c_client`], [
+  ],
+  [驱动 `struct i2c_driver`], [
+  ],
+)
+
+*总线注册*：
+
+*设备驱动*：
+
+#table(align: center + horizon, columns: (1fr, 6fr),
+  table.cell(colspan: 2)[
+    `struct i2c_driver { /* ...... */ }`
+  ],
+  table.cell(rowspan: 2)[`probe`],
+  `int* (*)(struct i2c_client *, const struct i2c_device_id *id);`,
+  [
+    设备驱动匹配后调用，进行 _设备文件注册_ 等 *初始化* 工作
+
+    #text(fill: red, weight: "bold")[
+      可导出由内核传入并在驱动绑定期间稳定的 `struct i2c_client *`
+    ]
+  ],
+  table.cell(rowspan: 2)[`remove`],
+  `int* (*)(struct i2c_client *);`,
+  [
+    设备注销前调用，进行 _设备文件注销_ 等 *清理* 工作
+  ],
+  table.cell(rowspan: 2)[`id_table`],
+  `const struct i2c_device_id *`,
+  [
+  ],
+  table.cell(rowspan: 2)[`driver`],
+  `struct device_driver`,
+  [
+  ],
+)
+
+```c
+int i2c_master_send(const struct i2c_client *, const char *, int);
+int i2c_master_recv(const struct i2c_client *, char *, int);
+
+s32 i2c_smbus_read_byte(const struct i2c_client *client);
+s32 i2c_smbus_write_byte(const struct i2c_client *client, u8 value);
+
+int i2c_slave_register(struct i2c_client *, i2c_slave_cb_t);
+int i2c_slave_unregister(struct i2c_client *);
+
+// i2cdetect -l 列出所有 I2C 总线
+// i2cdetect -y -r <nr> 总线上设备扫描
+// 确认 nr 为总线设备 i2c-<nr>
+struct i2c_adapter *i2c_get_adapter(int nr);
+struct i2c_client *
+i2c_new_client_device(struct i2c_adapter *, struct i2c_board_info const *);
+struct i2c_client *
+i2c_new_dummy_device(struct i2c_adapter *, u16 addr);
+```
+
+获得 `struct i2c_client *` 实例
+
+- 在 `probe` 中获取
+- 通过 `to_i2c_client` 根据 `struct device *` 以 `container_of` 获得
+- 从设备树获得
+- 手动创建 `i2c_client`
+
+=== SPI
+
+#table(align: (center + horizon, horizon), columns: (auto, 1fr),
+  [*概念*], align(center)[*说明*],
+  [控制器 `struct spi_controller`], [
+  ],
+  [驱动 `struct spi_driver`], [
+  ],
+  [设备 `struct i2c_device`], [
+  ],
+  [传输 `struct spi_transfer`], [
+  ],
+  [消息 `struct spi_message`], [
+  ],
+)
+
+```c
+static inline struct device_node *of_find_node_by_path(const char *path);
+struct i2c_client *of_find_i2c_device_by_node(struct device_node *node);
+static inline struct spi_device *
+of_find_spi_device_by_node(struct device_node *node)
+```
+
+```c
+// 阻塞当前线程进行传输
+int spi_sync(struct spi_device *, struct spi_message *);
+
+//
+struct spi_driver *to_spi_driver(struct device_driver *);
+
+extern struct spi_device *
+spi_new_device(struct spi_controller *, struct spi_board_info *);
+```
+
+```c
+#include <linux/module.h>
+#include <linux/kernel.h>
+#include <linux/i2c.h>
+#include <linux/err.h>
+
+#define MY_BUS_NUM   1
+#define MY_DEV_ADDR  0x48   /* 7 位地址 */
+
+static struct i2c_client *dummy_client;
+
+static int __init dummy_init(void)
+{
+    struct i2c_adapter *adap;
+    int val;
+
+    /* 1. 获取适配器 */
+    adap = i2c_get_adapter(MY_BUS_NUM);
+    if (!adap) {
+        pr_err("dummy_i2c: adapter %d not found\n", MY_BUS_NUM);
+        return -ENODEV;
+    }
+
+    /* 2. 创建 dummy client
+     * 关键区别：返回 ERR_PTR，而非 NULL
+     */
+    dummy_client = i2c_new_dummy_device(adap, MY_DEV_ADDR);
+    if (IS_ERR(dummy_client)) {
+        int ret = PTR_ERR(dummy_client);
+        pr_err("dummy_i2c: i2c_new_dummy_device failed: %d\n", ret);
+        i2c_put_adapter(adap);
+        return ret;
+    }
+
+    /* client 已持有 adap 引用，释放本地引用 */
+    i2c_put_adapter(adap);
+
+    /*
+     * 3. 直接通信，无需任何 probe / driver 绑定。
+     *    这里以读取地址 0x00 处的字节为例。
+     */
+    val = i2c_smbus_read_byte_data(dummy_client, 0x00);
+    if (val < 0)
+        pr_err("dummy_i2c: read failed: %d\n", val);
+    else
+        pr_info("dummy_i2c: reg[0x00] = 0x%02x\n", val);
+
+    return 0;
+}
+
+static void __exit dummy_exit(void)
+{
+    /* 必须显式注销 */
+    if (!IS_ERR_OR_NULL(dummy_client))
+        i2c_unregister_device(dummy_client);
+}
+
+module_init(dummy_init);
+module_exit(dummy_exit);
+MODULE_LICENSE("GPL");
+MODULE_DESCRIPTION("i2c_new_dummy_device example");
+```
 
 // + **参考**：[Linux 修炼全景指南：四 - Linux 文件系统揭秘：为什么“一切皆文件”？](https://zeeklog.com/linux-xiu-lian-quan-jing-zhi-nan-si-linux-wen-jian-xi-tong-jie-mi-wei-shi-yao-yi-qie-jie-wen-jian-2/)
 

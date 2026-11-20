@@ -485,6 +485,13 @@ TODO 属性文件
 
 https://doc.embedfire.com/linux/imx6/driver/zh/latest/linux_driver/linux_device_model.html#
 
+
+
+
+
+
+
+
 == 设备树
 
 #h(2em)设备树 Device Tree 于 Linux 3.x 以后被引入，用于描述一个硬件平台
@@ -492,23 +499,9 @@ https://doc.embedfire.com/linux/imx6/driver/zh/latest/linux_driver/linux_device_
 
 == 驱动框架
 
+#pagebreak()
+
 === I2C
-
-#table(align: (center + horizon, horizon), columns: (auto, 1fr),
-  [*概念*], align(center)[*说明*],
-  [适配器 `struct i2c_adapter`], [
-  ],
-  [算法 `struct i2c_algorithm`], [
-  ],
-  [从设备 `struct i2c_client`], [
-  ],
-  [驱动 `struct i2c_driver`], [
-  ],
-)
-
-*总线注册*：
-
-*设备驱动*：
 
 #table(align: center + horizon, columns: (1fr, 6fr),
   table.cell(colspan: 2)[
@@ -564,6 +557,9 @@ i2c_new_dummy_device(struct i2c_adapter *, u16 addr);
 - 通过 `to_i2c_client` 根据 `struct device *` 以 `container_of` 获得
 - 从设备树获得
 - 手动创建 `i2c_client`
+
+
+#pagebreak()
 
 === SPI
 
